@@ -1,0 +1,264 @@
+Week,Home Team,Away Team
+13,Wolverhampton Wanderers,Chelsea
+13,Manchester City,West Bromwich Albion
+13,Arsenal,Southampton
+13,Leeds,Newcastle United
+13,Leicester,Everton
+13,Fulham,Brighton
+13,Liverpool,Tottenham Hotspur
+13,West Ham,Crystal Palace
+13,Aston Villa,Burnley
+13,Sheffield United,Manchester United
+14,Crystal Palace,Liverpool
+14,Southampton,Manchester City
+14,Everton,Arsenal
+14,Newcastle United,Fulham
+14,Brighton,Sheffield United
+14,Tottenham Hotspur,Leicester
+14,Manchester United,Leeds
+14,West Bromwich Albion,Aston Villa
+14,Burnley,Wolverhampton Wanderers
+14,Chelsea,West Ham
+15,Leicester,Manchester United
+15,Aston Villa,Crystal Palace
+15,Fulham,Southampton
+15,Arsenal,Chelsea
+15,Manchester City,Newcastle United
+15,Sheffield United,Everton
+15,Leeds,Burnley
+15,West Ham,Brighton
+15,Liverpool,West Bromwich Albion
+15,Wolverhampton Wanderers,Tottenham Hotspur
+16,Crystal Palace,Leicester
+16,Chelsea,Aston Villa
+16,Everton,Manchester City
+16,Brighton,Arsenal
+16,Burnley,Sheffield United
+16,Southampton,West Ham
+16,West Bromwich Albion,Leeds
+16,Manchester United,Wolverhampton Wanderers
+16,Tottenham Hotspur,Fulham
+16,Newcastle United,Liverpool
+17,Brighton,Wolverhampton Wanderers
+17,Burnley,Fulham
+17,Chelsea,Manchester City
+17,Crystal Palace,Sheffield United
+17,Everton,West Ham
+17,Manchester United,Aston Villa
+17,Newcastle United,Leicester
+17,Southampton,Liverpool
+17,Tottenham Hotspur,Leeds
+17,West Bromwich Albion,Arsenal
+18,Aston Villa,Tottenham Hotspur
+18,Fulham,Manchester United
+18,Leeds,Southampton
+18,Leicester,Chelsea
+18,Sheffield United,Newcastle United
+18,West Ham,West Bromwich Albion
+18,Wolverhampton Wanderers,Everton
+18,Arsenal,Crystal Palace
+18,Liverpool,Burnley
+18,Manchester City,Brighton
+19,Arsenal,Newcastle United
+19,Aston Villa,Everton
+19,Fulham,Chelsea
+19,Leeds,Brighton
+19,Leicester,Southampton
+19,Liverpool,Manchester United
+19,Manchester City,Crystal Palace
+19,Sheffield United,Tottenham Hotspur
+19,West Ham,Burnley
+19,Wolverhampton Wanderers,West Bromwich Albion
+20,Brighton,Fulham
+20,Burnley,Aston Villa
+20,Everton,Leicester
+20,Crystal Palace,West Ham
+20,Manchester United,Sheffield United
+20,West Bromwich Albion,Manchester City
+20,Chelsea,Wolverhampton Wanderers
+20,Newcastle United,Leeds
+20,Southampton,Arsenal
+20,Tottenham Hotspur,Liverpool
+21,Arsenal,Manchester United
+21,Brighton,Tottenham Hotspur
+21,Chelsea,Burnley
+21,Crystal Palace,Wolverhampton Wanderers
+21,Everton,Newcastle United
+21,Leicester,Leeds
+21,Manchester City,Sheffield United
+21,Southampton,Aston Villa
+21,West Bromwich Albion,Fulham
+21,West Ham,Liverpool
+22,Aston Villa,West Ham
+22,Burnley,Manchester City
+22,Fulham,Leicester
+22,Leeds,Everton
+22,Sheffield United,West Bromwich Albion
+22,Wolverhampton Wanderers,Arsenal
+22,Manchester United,Southampton
+22,Newcastle United,Crystal Palace
+22,Tottenham Hotspur,Chelsea
+22,Liverpool,Brighton
+23,Aston Villa,Arsenal
+23,Burnley,Brighton
+23,Fulham,West Ham
+23,Leeds,Crystal Palace
+23,Liverpool,Manchester City
+23,Manchester United,Everton
+23,Newcastle United,Southampton
+23,Sheffield United,Chelsea
+23,Tottenham Hotspur,West Bromwich Albion
+23,Wolverhampton Wanderers,Leicester
+24,Arsenal,Leeds
+24,Brighton,Aston Villa
+24,Chelsea,Newcastle United
+24,Crystal Palace,Burnley
+24,Everton,Fulham
+24,Leicester,Liverpool
+24,Manchester City,Tottenham Hotspur
+24,Southampton,Wolverhampton Wanderers
+24,West Bromwich Albion,Manchester United
+24,West Ham,Sheffield United
+25,Arsenal,Manchester City
+25,Aston Villa,Leicester
+25,Brighton,Crystal Palace
+25,Burnley,West Bromwich Albion
+25,Fulham,Sheffield United
+25,Liverpool,Everton
+25,Manchester United,Newcastle United
+25,Southampton,Chelsea
+25,West Ham,Tottenham Hotspur
+25,Wolverhampton Wanderers,Leeds
+26,Chelsea,Manchester United
+26,Crystal Palace,Fulham
+26,Everton,Southampton
+26,Leeds,Aston Villa
+26,Leicester,Arsenal
+26,Manchester City,West Ham
+26,Newcastle United,Wolverhampton Wanderers
+26,Sheffield United,Liverpool
+26,Tottenham Hotspur,Burnley
+26,West Bromwich Albion,Brighton
+27,Aston Villa,Wolverhampton Wanderers
+27,Brighton,Leicester
+27,Burnley,Arsenal
+27,Chelsea,Everton
+27,Liverpool,Fulham
+27,Manchester City,Manchester United
+27,Sheffield United,Southampton
+27,Tottenham Hotspur,Crystal Palace
+27,West Bromwich Albion,Newcastle United
+27,West Ham,Leeds
+28,Arsenal,Tottenham Hotspur
+28,Crystal Palace,West Bromwich Albion
+28,Everton,Burnley
+28,Fulham,Manchester City
+28,Leeds,Chelsea
+28,Leicester,Sheffield United
+28,Manchester United,West Ham
+28,Newcastle United,Aston Villa
+28,Southampton,Brighton
+28,Wolverhampton Wanderers,Liverpool
+29,Brighton,Newcastle United
+29,Burnley,Leicester
+29,Crystal Palace,Manchester United
+29,Fulham,Leeds
+29,Liverpool,Chelsea
+29,Manchester City,Wolverhampton Wanderers
+29,Sheffield United,Aston Villa
+29,Tottenham Hotspur,Southampton
+29,West Bromwich Albion,Everton
+29,West Ham,Arsenal
+30,Arsenal,Liverpool
+30,Aston Villa,Fulham
+30,Chelsea,West Bromwich Albion
+30,Everton,Crystal Palace
+30,Leeds,Sheffield United
+30,Leicester,Manchester City
+30,Manchester United,Brighton
+30,Newcastle United,Tottenham Hotspur
+30,Southampton,Burnley
+30,Wolverhampton Wanderers,West Ham
+31,Brighton,Everton
+31,Burnley,Newcastle United
+31,Crystal Palace,Chelsea
+31,Fulham,Wolverhampton Wanderers
+31,Liverpool,Aston Villa
+31,Manchester City,Leeds
+31,Sheffield United,Arsenal
+31,Tottenham Hotspur,Manchester United
+31,West Bromwich Albion,Southampton
+31,West Ham,Leicester
+32,Arsenal,Fulham
+32,Aston Villa,Manchester City
+32,Chelsea,Brighton
+32,Everton,Tottenham Hotspur
+32,Leeds,Liverpool
+32,Leicester,West Bromwich Albion
+32,Manchester United,Burnley
+32,Newcastle United,West Ham
+32,Southampton,Crystal Palace
+32,Wolverhampton Wanderers,Sheffield United
+33,Arsenal,Everton
+33,Aston Villa,West Bromwich Albion
+33,Fulham,Tottenham Hotspur
+33,Leeds,Manchester United
+33,Leicester,Crystal Palace
+33,Liverpool,Newcastle United
+33,Manchester City,Southampton
+33,Sheffield United,Brighton
+33,West Ham,Chelsea
+33,Wolverhampton Wanderers,Burnley
+34,Brighton,Leeds
+34,Burnley,West Ham
+34,Chelsea,Fulham
+34,Crystal Palace,Manchester City
+34,Everton,Aston Villa
+34,Manchester United,Liverpool
+34,Newcastle United,Arsenal
+34,Southampton,Leicester
+34,Tottenham Hotspur,Sheffield United
+34,West Bromwich Albion,Wolverhampton Wanderers
+35,Arsenal,West Bromwich Albion
+35,Aston Villa,Manchester United
+35,Fulham,Burnley
+35,Leeds,Tottenham Hotspur
+35,Leicester,Newcastle United
+35,Liverpool,Southampton
+35,Manchester City,Chelsea
+35,Sheffield United,Crystal Palace
+35,West Ham,Everton
+35,Wolverhampton Wanderers,Brighton
+36,Brighton,West Ham
+36,Burnley,Leeds
+36,Everton,Sheffield United
+36,Crystal Palace,Aston Villa
+36,Manchester United,Leicester
+36,West Bromwich Albion,Liverpool
+36,Chelsea,Arsenal
+36,Newcastle United,Manchester City
+36,Southampton,Fulham
+36,Tottenham Hotspur,Wolverhampton Wanderers
+37,Brighton,Manchester City
+37,Burnley,Liverpool
+37,Chelsea,Leicester
+37,Crystal Palace,Arsenal
+37,Everton,Wolverhampton Wanderers
+37,Manchester United,Fulham
+37,Newcastle United,Sheffield United
+37,Southampton,Leeds
+37,Tottenham Hotspur,Aston Villa
+37,West Bromwich Albion,West Ham
+38,Arsenal,Brighton
+38,Aston Villa,Chelsea
+38,Fulham,Newcastle United
+38,Leeds,West Bromwich Albion
+38,Leicester,Tottenham Hotspur
+38,Liverpool,Crystal Palace
+38,Manchester City,Everton
+38,Sheffield United,Burnley
+38,West Ham,Southampton
+38,Wolverhampton Wanderers,Manchester United
+11,Aston Villa,Newcastle United
+1,Burnley,Manchester United
+1,Manchester City,Aston Villa
