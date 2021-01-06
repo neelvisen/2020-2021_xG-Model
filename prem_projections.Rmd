@@ -122,6 +122,7 @@ current_league_standings %>%
   kable(caption = "Premier League Standings As of Gameweek 12") %>% 
   kable_styling(latex_options = "hold_position")
 ```
+\newpage
 # Data
 
 The data used in this project is sourced from Understat, a free online resource that analyzes, collects, and publishes tabulated football match data for the English Premier League, as well as the Spanish, German, Italian, French, and Russian leagues. According to the message published on their homepage, "In a low-scoring game such as football, final match score does not provide a clear picture of performance...this is why more and more sports analytics turn to the advanced models like [expected goals], which is a statistical measure of the quality of chances created and conceded" (Understat [2017]). Essentially, the expected goals metric takes on several parameters associated with a shot in football, including the type of pass from which the shot came from (aerial cross, through ball, etc.), shot angle and distance from goal, and type of chance (established possession, rebound, volley, position of the defense, etc.). 
@@ -247,9 +248,9 @@ defensive_ratings <- weighted_data$defensive_rating %>%
   `names<-`(weighted_data$team)
 ```
 
-To apply the equations above, we use Liverpool as a working example. Given that each team in the league has been assigned a relative offensive and defensive metric, and that we know each of Liverpool's remaining fixtures and where they will occur (Home or Away), we can predict how many goals Liverpool and their opponent will score in a given match. Using the formulas from earlier, we create two new formulas calculating Liverpool's predicted home and away goals against a given opponent :
+To apply the equations above, we use Liverpool as a working example. Given that each team in the league has been assigned a relative offensive and defensive metric, and that we know each of Liverpool's remaining fixtures and where they will occur (Home or Away), we can predict how many goals Liverpool and their opponent will score in a given match. Using the formulas from earlier, we create two new formulas calculating Liverpool's predicted home and away goals against a given opponent:
 
-  $$ {Pred.LiverpoolGoals}_{home} = ({Offensive Rating}_{Liverpool})({Defensive Rating}_{Opponent})({Home Advantage})$$  
+  $$ {Pred.LiverpoolGoals}_{home} = ({Offensive Rating}_{Liverpool})({Defensive Rating}_{Opponent})({Home Advantage})$$
   $$ {Pred.LiverpoolGoals}_{away} = ({Offensive Rating}_{Liverpool})({Defensive Rating}_{Opponent})$$  
   
 Using these equations, we generate the "Lambda" of the Poisson process of our simulations. Below, we see the predicted number of goals for each of Liverpool's remaining games. By applying this lambda" to both teams in every remaining fixture, we can generate simulations for every remaining fixture.
@@ -521,6 +522,7 @@ final_league_standings %>%
   kable(caption = "Final Predicted Premier League Standings") %>% 
   kable_styling(latex_options = "hold_position")
 ```
+\newpage
 # Discussion
 
 ## Model Implications
@@ -544,7 +546,7 @@ A significant complication of this model is that it assumes that every team will
 
 Finally, it should be noted that the Poisson model for goal distributions may not be the most ideal to represent goals. Since the distribution assumes that the likelihood of an event happening is the same throughout an entire time period, it assumes that the rate of goals being scored in a football match is distributed relatively evenly. Research has shown however that goal frequency increases the further one goes into a game (perhaps due to substitutions, pressure, and physical and mental fatigue). Future research may address this shortcoming by mapping goals to a different distribution, such as a bivariate Poisson or Weibull distribution. 
 
-
+\newpage
 # Appendix 
 
 ```{r message=FALSE, warning=FALSE, echo=FALSE, fig.cap="PL Teams Ranked by xG Per Game"}
@@ -718,8 +720,7 @@ over_under_performance_scatter
 ```
 
 
-
-
+\newpage
 # References
 
 Anand, V. (2020). Github Repository: Fantasy-Premier-League. Retrieved from https://github.com/vaastav/Fantasy-Premier-League
