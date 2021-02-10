@@ -1,5 +1,3 @@
-# STA304-PS5-xG-Model
-
 This repo contains an Rmd file containing all of the code pertaining to the PDF version of my STA304 PS5 project. The goal of this project is to build a predictive model for simulating the remainder of the 2020-2021 Premier League season as of the end of game week 12. The following report uses an expected goals (xG) model to create relative team ratings based on xG and xGA. This data is applied to determine a lambda for a Poisson process that is used in a Monte Carlo simulation of the remaining two-thirds of the season.
 
 Besides the two report files, this report contains 4 csv files that are used to help run the code in the Rmd file.
