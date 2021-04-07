@@ -1,3 +1,5 @@
+# 2020-2021 Premier League Simulation (R)
+
 The goal of this project is to build a predictive model for simulating the remainder of the 2020-2021 Premier League season as of the end of Gameweek 12. The following report uses an expected goals (xG) model to create relative team ratings based on xG and xGA.
 
 These weights determine a lambda for a Poisson process that is used to predict the number of goals each team will score in a match. Every potential outcome for a match is assigned a probability. The Monte Carlo process samples from the distribution of these match outcomes several times over until an outcome is reached.
