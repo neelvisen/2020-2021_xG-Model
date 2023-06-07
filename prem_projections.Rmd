@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ---
 title: "Forecasting the Best Teams for the Remainder of the 2020-2021 Premier League Season"
 author: "Neelansh Visen"
@@ -747,3 +748,754 @@ Taylor, M. (2016). How To Frame An Individual Match Outcome. Retrieved 2020, fro
 
 Wickham et al., (2019). Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686,
 https://doi.org/10.21105/joss.01686
+=======
+---
+title: "Forecasting the Best Teams for the Remainder of the 2020-2021 Premier League Season"
+author: "Neelansh Visen"
+date: "22 December 2020"
+abstract: "The advent of analytics and advanced metrics in associatio football (soccer) has led to the adoption of more sophisticated models used to determine the outcomes of games across a season. Recently, expected statistics (particularly expected goals) have gained popularity in their ability to provide a balanced evaluation of team performance in a match. In this paper, I create a predictive model of team performance based on a club's expected goals for and expected goals against against from the first third of the 2020-2021 Premier League Season. Based on these findings, a Monte Carlo simulation is run on the remaining fixtures of the 2020-2021 season, with Liverpool slightly edging out the competition to claim their second title in as many years."
+output:
+  pdf_document: default
+  html_document: default
+---
+**Keywords**: Association Football (Soccer), Premier League, Poisson Distribution, Expected Goals, Monte Carlo Simulation
+
+Github repository can be found at: https://github.com/neelvisen/STA304-PS5-xG-Model
+
+```{r setup, include=FALSE}
+# install.packages("tidyverse")
+library(tidyverse)
+# install.packages("ggrepel")
+library(ggrepel)
+# install.packages("kableExtra")
+library(kableExtra)
+
+# reproducibility
+set.seed(6650)
+```
+
+```{r message=FALSE, include=FALSE}
+# read in the dataset 
+all_data <- read_csv("understat_all_teams.csv")
+```
+
+```{r message=FALSE, include=FALSE}
+# renaming variables
+understat_data <- all_data %>%
+  dplyr::select(
+  team = team,
+  home_or_away = h_a, 
+  expected_goals = xG,
+  expected_goals_against = xGA, 
+  non_penalty_expected_goals = npxG,
+  non_penalty_expected_goals_against = npxGA,
+  goals_scored = scored,
+  goals_against = missed,
+  expected_points = xpts,
+  pts = pts
+  )
+
+head(understat_data)
+```
+
+```{r include=FALSE}
+# list of teams
+teams <- c(
+  "Arsenal",
+  "Aston Villa",             
+  "Brighton",
+  "Burnley",         
+  "Chelsea", 
+  "Crystal Palace",
+  "Everton",
+  "Fulham",    
+  "Leeds" ,           
+  "Leicester",
+  "Liverpool",
+  "Manchester City",        
+  "Manchester United",
+  "Newcastle United",        
+  "Sheffield United",
+  "Southampton", 
+  "Tottenham Hotspur",  
+  "West Bromwich Albion",  
+  "West Ham",
+  "Wolverhampton Wanderers"
+)
+
+# list of team colours
+team_colours <- c(
+  "Arsenal" = "#800080",
+  "Aston Villa" = "#fbdb48",             
+  "Brighton" = "#00ecff",
+  "Burnley" = "#991111",         
+  "Chelsea" = "#392897", 
+  "Crystal Palace" = "#4b0082",
+  "Everton" = "#0000ff",
+  "Fulham" = "#000000",    
+  "Leeds" = "#AC944D",           
+  "Leicester" = "#0053a0",
+  "Liverpool" = "#ff0000",
+  "Manchester City" = "#97c1e7",        
+  "Manchester United" = "#c50808",
+  "Newcastle United" = "#999999",        
+  "Sheffield United" = "#ffc0cb",
+  "Southampton" = "#899c25", 
+  "Tottenham Hotspur" = "#4b4b98",  
+  "West Bromwich Albion" = "#008000",  
+  "West Ham" = "#2dafe5",
+  "Wolverhampton Wanderers" = "#dfaf37"
+)
+```
+
+# Introduction
+
+Whether it be through gambling, fantasy sports, or simple banter with colleagues, predicting the outcome of a match or season has long been a subject of interest for even the most passive of football (soccer) fans. In recent times, what was once an topic of fascination has evolved into a hotly discussed area of study. With many teams in the Premier League sporting a betting company sponsorship, the discussions between match predictions and the game itself are inexplicably connected.  
+
+In the following study, I create a predictive model for simulating the 2020-2021 Premier League season from gameweek 13 onward. As of the writing of this report, Tottenham Hotspur have enjoyed a hot start to the season, and currently sit tied for first in the league with current champions Liverpool. Although past results are not the strongest predictors of future results, one can apply expected results (that is, statistics based on what should have happened in the game, not necessarily what actually happened) for a more nuanced judgment of a team's actual performance and form over an extended period of matches. 
+
+The simulation model for this analysis relies on two key assumptions. First, the accuracy of the model relies on the quantified abilities assigned to each team in the Premier League. In this paper, teams are assigned an offensive and defensive rating based on the relative strength of each team with regards to the expected number of goals scored and conceded during the first 12 gameweeks of the season. The second assumption this model relies on is the recent notion that goals scored in a football match closely resemble the Poisson distribution (Dyte and Clarke [1999]; Chu [2003]). After constructing each teams relative offensive and defensive strengths, an additional parameter is included in the model based on where the game is being played. Although the impact of match location has been declining for over a century in English football, home field advantage still exists to this day (Smith [2017]). 
+
+These three parameters (relative offensive strength, relative defensive strength, home field advantage) are then applied to every remaining fixture of the season. Each competing team in a match is assigned a predicted number of goals scored based on their competition. This value is used as the lambda (mean) of the Poisson process that is used to determine the probability of any given fixture result. From there, a Monte Carlo simulation is conducted to simulate 100 iterations of each remaining fixture this season. Of these 100 simulations, each team's average number of points is calculated and added to the current Premier League standings to determine the final rankings of this season. I find that Liverpool manage to hang on to their first place ranking, with Chelsea, Manchester City, and Tottenham not far behind. These results heavily penalize teams like Southampton (falling from 4th to 10th) that according to the model have been punching above their weight thus far, and favour perennial favourites Manchester City (rising from 9th to 3rd) that have struggled to secure positive results despite heavily outplaying their competition. At the end of this paper, I address certain shortcomings of the model, including sample size, recency bias, and its failure to address the dynamism of factors including managerial and personnel changes. Furthermore, I discuss some of the implications and applications of this model, similar models, and expected statistics at-large. 
+
+This analysis is grateful for the works of Mark Taylor, Robert Hickman, and David Sheehan, whose analyses and simulations for other teams, leagues, and time periods helped formulate some of the code for this paper. Additionally, this paper could not have been made without the data collected by Understat (Understat 2017) and the work of Vaastav Anand, whose repository was used to collect the Understat data in CSV. form. Finally, this paper was created using R (R Core Team 2019]), as well as the packages 'tidyverse' (Wikham et al. [2019]), 'ggrepel' (Slowikowski [2020]), and 'kableExtra' (Zhu [2019]).  
+
+```{r message=FALSE, echo=FALSE}
+# show current league standings
+current_league_standings <- read_csv("current league standings.csv") %>% 
+  select(Team, Points, GD) %>% 
+  rename(team = Team) %>% 
+  rename(points = Points) %>% 
+  rename(goal_difference = GD) %>% 
+  arrange(desc(points))
+
+current_league_standings %>% 
+  kable(caption = "Premier League Standings As of Gameweek 12") %>% 
+  kable_styling(latex_options = "hold_position")
+```
+\newpage
+# Data
+
+The data used in this project is sourced from Understat, a free online resource that analyzes, collects, and publishes tabulated football match data for the English Premier League, as well as the Spanish, German, Italian, French, and Russian leagues. According to the message published on their homepage, "In a low-scoring game such as football, final match score does not provide a clear picture of performance...this is why more and more sports analytics turn to the advanced models like [expected goals], which is a statistical measure of the quality of chances created and conceded" (Understat [2017]). Essentially, the expected goals metric takes on several parameters associated with a shot in football, including the type of pass from which the shot came from (aerial cross, through ball, etc.), shot angle and distance from goal, and type of chance (established possession, rebound, volley, position of the defense, etc.). 
+
+In a football match, each shot taken by a team is compared to thousands of other shots with similar shot parameters as those mentioned above. Essentially, what expected goals shows is the probability (between 0 and 1) that a given shot would result in a goal, based on the goal history of similar shots across time. For instance, a screamer hit from 35 yards away from goal with the weak foot might generate an expected goal value close to 0, whereas a tap-in in front of an open goal might result in a expected goal value close to 1. If during a certain offensive action a team generates multiple shots in a brief period with an xG above 1, then the calculation simply becomes 1 - the probability of the offensive team NOT scoring during that passage of play. Because the process of comparing a particular shot to several thousand others is incredibly exhaustive, in order to generate their expected goals tallies, Understat, "[trains] neural network prediction algorithms with a large dataset (>100,000 shots, over 10 parameters for each)" (Understat). 
+
+There are several advantages to using expected goals data versus actual goals data. Perhaps most evidently, is that expected goals can help reduce the impact of luck in any given match result. In such a low scoring game like professional football, game results can often be decided by a fluke deflection towards or away from the net. Beyond fan analysis, teams themselves have adopted expected goals as a strong indicator of real match or season performance, leading to more informed decisions with regards to managerial and player personnel changes. Furthermore, teams (and amateur statisticians) can assess certain parameters of expected goals in order to determine things like favourable passing patterns and specific team strengths and weaknesses (goals from set pieces, certain sides of the pitch, etc.). 
+
+At the same time however, expected goals can sometimes be misleading for the best players and teams. Although expected goals addresses several factors leading into a shot, the player taking the shot is not addressed. For example, Tottenham forwards Harry Kane and Heung Min Son are widely regarded as two of the best finishers in world football. As statistically unrigorous as this statement is, the sentiment is backed up in their career expected and actual goal output. Season after season, the two players have constantly outperformed their expected goals tallies by a healthy margin. Although outperforming expected goals in some cases is a sign of a luck, its impossible to maintain that luck for an extended period of time.  
+
+With regards to this paper, I take expected goals data from Understat for the first 12 gameweeks of the 2020-2021 Premier League season. In this paper, I focus on expected goals for (xG) and expected goals against (xGA) to create the offensive and defensive relative strength metrics of each team. Because fixtures historically trend in favour of the home team, I create a table summarizing average points per game, average expected points per game (based on xG and xGA), and average expected goals per game for home and away teams.
+
+```{r message=FALSE, echo=FALSE}
+# home/away analysis
+
+# home/away points
+ha_pts <- understat_data %>% 
+  group_by(home_or_away) %>%
+  # without fans, away teams have yielded more points per match than home teams
+  summarize(avg_pts = mean(pts))
+
+# home/away expected points
+ha_xpts <- understat_data %>%
+  group_by(home_or_away) %>%
+  # however, expected points does not back this trend up
+  summarize(avg_xpts = mean(expected_points))
+
+# home/away expected goals
+ha_xG <- understat_data %>%
+  group_by(home_or_away) %>%
+  summarize(xG_per_game = mean(expected_goals))
+
+# home/away summary statistics
+ha_stats <- cbind(ha_pts, xG_per_game = ha_xG$xG_per_game, avg_xpts = ha_xpts$avg_xpts) 
+
+ha_stats %>% 
+  kable(digits = 3, caption = "Home and Away Summary Statistics") %>% 
+  kable_styling(latex_options = "hold_position")
+```
+Surprisingly, away teams this season have fared better than home teams in terms of actual points won this season. However, when we look at xG and xPts (expected points per match based on xG and xGA), we find that home teams in fact have been outplaying away teams thus far. Whether the discrepancy is due to low sample size, poor finishing stretches, or some other factor, we will later use quotient of home and away xG to create a home field advantage factor for our model. We continue examining the Understat xG data below, proceeding to rank each team in the Premier League based on xG, xGA, and xGD (the difference in expected goals scored and conceded per game). (Figure 1, Figure 2, Figure 3 in the appendix).
+
+Not unexpectedly, we find the same four teams at the bottom of both the current league table and the expected goal difference per game chart (Figure 3). Despite finishing 7th in the league last year, Wolverhampton has struggled to put the ball in the net without their two main goal threats Raul Jimenez (injured) and Diogo Jota (transferred to Liverpool). On the top half of the chart, we see the usual contenders Liverpool and Manchester City thoroughly out-creating and defending their oppositions. Interestingly, quality in play has not transferred over favourably for the latter, who currently sit 9th in the league table. Similarly, Chelsea maintain a healthy lead over the competition in terms of xGD despite sitting 5th in the table. On the other hand, despite their 5th place standing on the xGD chart, Tottenham currently lead the league in points (in large part due to the world class contributions of the aforementioned Harry Kane and Heung Min Son). We continue the exploratory analysis by creating a scatterplot of xG against xGA and actual goals, as well as xGA against actual goals against. (Please see graphs in the appendix).
+
+Evidently, there is a somewhat strong linear relationship between expected and actual goal statistics (Figure 4 and Figure 5). Perhaps more surprisingly, there hardly any linear relationship (if at all) between xG and xGA (Figure 6). Usually, expected goals and assists are used to project under and over performing teams over a stretch of games. To visualize this idea, we create another scatterplot below mapping the differences between expected and actual goals for and against (Figure 7 in the appendix). 
+
+The horizontal and vertical dotted lines indicate whether teams are over/under performing a given metric. Teams above the horizontal line are currently overperforming with regards to goal scoring. Likewise, teams below the horizontal are teams currently underperforming with regards to goal output. Teams to the right of the vertical line are teams currently overperforming with regards to defending. These teams are conceding at a lower rate than what the shots they allow would suggest. Likewise, teams to the left of the vertical line have been conceding at a higher rate than what the shots they allow would suggest. If we assume that the xG/xGA models hold true in the long term, (that is, teams in the long term score and concede at a similar rate to what xG/xGA expects), then we should expect teams like Brighton to improve defensively, Sheffield United to improve offensively, Southampton to regress offensively, and Tottenham to regress both offensive and defensively. 
+
+```{r, include=FALSE}
+# create a column with number of games played 
+games_played = count(understat_data, team)
+
+# define average expected goals per game based on home and away scoring rates
+avg_team_xG_per_game = (ha_xG$xG_per_game[1] + ha_xG$xG_per_game[2]) / 2
+# [1] 1.389342
+
+# define league wide home field advantage as: home xG / away xG
+home_advantage = ha_xG$xG_per_game[2] / ha_xG$xG_per_game[1]
+# [1] [1] 1.0766
+```
+
+# Model
+
+Ultimately, our goal is to create an offensive an defensive rating per team, and then to apply those ratings to each remaining fixture of the 2020-2021 season. Since are looking at relative strengths, we simply take each team's xG and xGA and divide (standardize) them by the league-wide average for each metric respectively. As equations, these metrics can be seen as:
+
+  $$ {Offensive Rating}_{team} = \frac {xG per game_{team}}{xG per game_{league}}$$
+  $$ {Defensive Rating}_{team} = \frac {xGA per game_{team}}{xGAper game_{league}}$$  
+Additionally, we create a third metric accounting for whether a team is playing at home.
+
+  $$ {Home Advantage} = \frac {avg.leaguewide.xG per game_{home}}{avg.leaguewide.xGper game_{away}}$$  
+```{r warning=FALSE, include=FALSE}
+# expected goals per game
+xG_per_game <- understat_data %>%
+  group_by(team) %>%
+  summarize(xG_per_game = mean(expected_goals))
+
+# expected goals against per game
+xGA_per_game <- understat_data %>%
+  group_by(team) %>%
+  summarize(xGA_per_game = mean(expected_goals_against))
+
+# expected goals vs. expected goals against per game
+xG_xGA = bind_cols(xG_per_game, xGA_per_game$xGA_per_game)
+xG_xGA <- xG_xGA %>% 
+  rename(xGA_per_game = ...3)
+
+# create new data frame with offensive and defensive ratings per team
+
+weighted_data <- xG_xGA %>% 
+  # define offensive and defensive ratings per team based on their xG and xGA compared to the league averages
+  mutate(offensive_rating = xG_per_game / avg_team_xG_per_game) %>% 
+  mutate(defensive_rating = xGA_per_game / avg_team_xG_per_game)
+
+weighted_data$games_played <- games_played$n
+
+# define remaining games played
+weighted_data <- weighted_data%>% 
+  mutate(games_remaining = 38 - games_played)
+
+# see current working data
+head(weighted_data)
+```
+
+```{r message=FALSE, include=FALSE}
+# look at remaining games in the premier league
+remaining_fixtures <- read_csv("remaining fixtures.csv")
+remaining_fixtures
+```
+
+```{r include=FALSE}
+# use Liverpool as an example for the next few code chunks
+
+# Liverpool's remaining fixtures
+remaining_liverpool_games <- remaining_fixtures %>% 
+  filter(grepl("Liverpool", `Home Team`) | grepl("Liverpool", `Away Team`)) %>% 
+  print()
+```
+
+```{r, include=FALSE}
+# isolate the attack and defense ratings of all teams on their own
+offensive_ratings <- weighted_data$offensive_rating %>% 
+  `names<-`(weighted_data$team)
+defensive_ratings <- weighted_data$defensive_rating %>% 
+  `names<-`(weighted_data$team)
+```
+
+To apply the equations above, we use Liverpool as a working example. Given that each team in the league has been assigned a relative offensive and defensive metric, and that we know each of Liverpool's remaining fixtures and where they will occur (Home or Away), we can predict how many goals Liverpool and their opponent will score in a given match. Using the formulas from earlier, we create two new formulas calculating Liverpool's predicted home and away goals against a given opponent:
+
+  $$ {Pred.LiverpoolGoals}_{home} = ({Offensive Rating}_{Liverpool})({Defensive Rating}_{Opponent})({Home Advantage})$$
+  $$ {Pred.LiverpoolGoals}_{away} = ({Offensive Rating}_{Liverpool})({Defensive Rating}_{Opponent})$$  
+  
+Using these equations, we generate the "Lambda" of the Poisson process of our simulations. Below, we see the predicted number of goals for each of Liverpool's remaining games. By applying this lambda" to both teams in every remaining fixture, we can generate simulations for every remaining fixture.
+
+```{r, echo=FALSE}
+# simulate expected goals for and against by Liverpool in their remaining fixtures 
+# the formula for the home team is offensive rating * opponent defensive rating * home field advantage
+# the formula for the away team is offensive rating * opponent defensive rating
+# expected goals are rounded to the hundredth digit
+liverpool_remaining_results <- paste(
+  round(offensive_ratings[remaining_liverpool_games$`Home Team`] *
+          defensive_ratings[remaining_liverpool_games$`Away Team`] *
+          home_advantage, 2),
+  round(offensive_ratings[remaining_liverpool_games$`Away Team`] *
+          defensive_ratings[remaining_liverpool_games$`Home Team`], 2),
+  sep = "-") %>% 
+                   
+  `names<-`(c(paste(remaining_liverpool_games$`Home Team`, remaining_liverpool_games$`Away Team`, sep = "-"))) %>%
+  print()
+```
+
+```{r message=FALSE, echo=FALSE}
+# the same code is applied to every remaining fixture in the league
+all_remaining_results <- paste(
+  round(offensive_ratings[remaining_fixtures$`Home Team`] *
+          defensive_ratings[remaining_fixtures$`Away Team`] *
+          home_advantage, 2),
+  round(offensive_ratings[remaining_fixtures$`Away Team`] *
+          defensive_ratings[remaining_fixtures$`Home Team`], 2),
+  sep = "-") %>% 
+  `names<-`(c(paste(remaining_fixtures$`Home Team`, remaining_fixtures$`Away Team`, sep = "-")))
+  #print()
+
+# these values are tabulated in the following csv file 
+predicted_remaining_fixtures <- read_csv("remaining fixtures tabulated.csv") %>% 
+  rename("home" = "Home Team") %>% 
+  rename("away" = "Away Team") %>% 
+  rename("predicted_home_goals" = "Predicted Home Goals") %>% 
+  rename("predicted_away_goals" = "Predicted Away Goals")
+  
+# use Liverpool vs. Tottenham to explain the Poisson process
+predicted_remaining_fixtures[7,]
+```
+
+To show the Poisson process at work, Liverpool's gameweek 13 fixture against Tottenham is simulated 10000 times, with each team's goal distribution plotted below. Assuming that goals scored follows a Poisson distribution, the probability that a team scores n goals in one match is defined as:
+
+  $$ P(n) = \frac{\lambda^n e^{-\lambda}}{n!}$$
+It should also noted that the maximum number of goals any team will score in the fixture has been set to 7 arbitrarily, given the extremely low probabilities of scoring 8+ goals in a top-level domestic match. Given that Given that Liverpool's lambda is 1.35 and Tottenham's lambda is 1.11, we would expect Liverpool's distribution to be pushed further towards the right.
+
+```{r warning=FALSE, echo=FALSE}
+# much of the modeling code was adopted from code written by Robert Hickman, who is referenced at the bottom of the document
+# I will comment "Hickman" at the top of a chunk if any code in that chunk was based off of his
+
+# simulate the Liverpool vs. Tottenham game 10000 times
+set.seed(6650)
+n <- 10000
+
+# set the maximum goals by a team to 7
+max_goals <- 7
+
+# liverpool spurs is the 7th matchup in the dataset loaded above
+liverpool_tottenham_matchup <- predicted_remaining_fixtures[7,]
+
+# goals are poisson distributed in football
+liverpool_goals_probabilities <- rpois(n, lambda = liverpool_tottenham_matchup$predicted_home_goals)
+tottenham_goals_probabilities <- rpois(n, lambda = liverpool_tottenham_matchup$predicted_away_goals)
+
+df <- data.frame(team = rep(c('home', 'away'), each = n),
+                 sampled_goals = c(liverpool_goals_probabilities, tottenham_goals_probabilities))
+
+# plot the goal distributions of each team below
+liverpool_tottenham_goal_dist <- ggplot(df, aes(x = sampled_goals, fill = team)) +
+  geom_bar(stat = "count", position = "dodge", colour = "black", alpha = 0.5) +
+  geom_line(aes(colour = team), stat = "count", size = 3) +
+  scale_fill_manual(values = c("blue", "red"), guide = FALSE) +
+  scale_colour_manual(values = c("blue", "red"), guide = FALSE) +
+  labs(title = "Predicted goals for Liverpool (Red) and Tottenham (Blue)",
+       y = "Probability",
+       x = "Number of Goals Scored Per Team") +
+  theme_classic() +
+  theme(axis.text.y = element_blank()) +
+  scale_x_discrete(limits = c(0:max_goals)) 
+
+liverpool_tottenham_goal_dist
+```
+
+As predicted, Liverpool's goal distribution (in Red) is shifted rightward compared to the Tottenham goal distribution. Although the probability of Tottenham scoring 0 or 1 goal is greater than that of Liverpool, the probability of Liverpool scoring 2 or more goals exceeds that of Tottenham. Because football is a game of competing totals, a matrix can be made to show the probability of a particular scoreline occurring. If we define the highest row to correspond to the number of goals Liverpool scores, and the leftmost column to correspond to the number of goals Tottenham scores, then we can determine the probability that a particular scoreline occurs. By adding up the upper triangle of the probability matrix, we can calculate the probability that Liverpool wins the match. Likewise, we can calculate the probability that Tottenham wins the match (lower triangle) and the probability of a draw occuring (main diagonal).
+
+```{R, echo=FALSE}
+#Hickman
+
+# show the probability of outcomes for Liverpool vs. Tottenham 
+liverpool_tottenham_goal_matrix <- dpois(0:max_goals, liverpool_tottenham_matchup$predicted_away_goals) %o% dpois(0:max_goals, liverpool_tottenham_matchup$predicted_home_goals)
+
+# the diagonal of the matrix shows the outcomes when each team scores the same number of goals
+# the sum of the probabilities is the probability that the game finishes in a draw
+draw <- sum(diag(liverpool_tottenham_goal_matrix))
+
+# the upper triangle values of the matrix show the probabilities of all Liverpool wins
+liverpool_win <- sum(liverpool_tottenham_goal_matrix[upper.tri(liverpool_tottenham_goal_matrix)])
+
+# the lower triangle values of the matrix show the probabilities of all Tottenham wins
+tottenham_win <- sum(liverpool_tottenham_goal_matrix[lower.tri(liverpool_tottenham_goal_matrix)])
+
+rownames(liverpool_tottenham_goal_matrix) <- 0:max_goals
+colnames(liverpool_tottenham_goal_matrix) <- 0:max_goals
+
+# uncomment below to see the full probability matrix
+# print(signif(liverpool_tottenham_goal_matrix), digits = 2)
+
+
+cat('home win %:',liverpool_win * 100, sep="\n")  
+cat('draw %:',draw * 100, sep="\n")  
+cat('away win %:',tottenham_win * 100, sep="\n")
+```
+
+According to the probability matrix, Liverpool wins ~42.5% of the time. Tottenham wins 30.6% of the time, and a draw occurs ~26.9% of the time. The cleaned up results of this probability matrix are published below in a tile plot. 
+
+```{r include=FALSE}
+# Hickman
+
+#calculate the probability of scoring x goals for either team
+liverpool_discrete_matrix <- lapply(0:max_goals, dpois, lambda = liverpool_tottenham_matchup$predicted_home_goals)
+tottenham_discrete_matrix <- lapply(0:max_goals, dpois, lambda = liverpool_tottenham_matchup$predicted_away_goals)
+
+matrix <- outer(unlist(liverpool_discrete_matrix), unlist(tottenham_discrete_matrix)) %>%
+  as.data.frame() %>%
+  gather() %>%
+  #add in scorelines
+  mutate(liverpool_goals = rep(0:max_goals, max_goals+1),
+         tottenham_goals = rep(0:max_goals, each = max_goals+1))
+```
+
+
+```{r echo=FALSE}
+# Hickman
+
+# make the tile plot of Liverpool vs. Tottenham
+liverpool_tottenham_tile <- 
+  ggplot(matrix, aes(x = liverpool_goals, y = rev(tottenham_goals), fill = value)) +
+  geom_tile() +
+  geom_text(aes(label = paste(liverpool_goals, tottenham_goals, sep = "-"))) +
+  # colours represent outcome probability of that score occurring (red = most likely)
+  scale_fill_gradient2(low = "white", high = "red", guide = FALSE) +
+  theme_minimal() +
+  labs(
+    x = "Liverpool Goals",
+    y = "Tottenham Goals"
+  )
+
+liverpool_tottenham_tile
+```
+
+The tile plot above indicates what our intuition would tell us about a soccer match between two relatively even teams (tied for 1st in the league as of their gameweek 13 matchup). With redder squares corresponding to more likely outcomes, the Poisson process expects 1-1 to be the most common result between the two teams, followed by a 1-0 Liverpool win and a 0-1 Tottenham win.
+
+A similar Poisson process is applied to every remaining fixture this season. It is here where the Monte Carlo simulation is applied to the model. Since every fixture has been assigned a distribution of results (essentially a probability matrix and the tile plot above are showing), we can sample from each distribution a certain number of times (100 in the case of this paper) and generate the average result and goal difference of a sampled fixture. After summing each team's average result and goal difference across all of their remaining fixtures, these results can be combined with the current league standings to generate a final predicted league table, shown in the results section below.
+
+```{r include=FALSE}
+# Hickman
+
+#calc out probabilities and bind up
+predicted_fixture_goal_probabilities <- map2_df(
+  predicted_remaining_fixtures$predicted_home_goals, predicted_remaining_fixtures$predicted_away_goals, 
+  function(lambda_home, lambda_away, max_goals) {
+    home_goal_probabilities <- dpois(0:max_goals, lambda_home) %>% `names<-`(0:max_goals)
+    away_goal_probabilities <- dpois(0:max_goals, lambda_away) %>% `names<-`(0:max_goals)
+    outer(home_goal_probabilities, away_goal_probabilities) %>%
+      as.data.frame() %>% 
+      gather() %>% 
+      rownames_to_column("row") %>%
+      mutate(actual_home_goals = as.numeric(row) %% (max_goals+1)-1) %>% 
+      mutate(actual_home_goals = case_when(actual_home_goals < 0 ~ max_goals, TRUE ~ actual_home_goals),
+             actual_away_goals = as.numeric(key)) %>%
+      select(sample_home_goals = actual_home_goals, sample_away_goals = actual_away_goals, probability = value)
+}, max_goals) %>%
+  cbind(remaining_fixtures[rep(seq_len(nrow(remaining_fixtures)), each=(max_goals+1)^2),], .) %>%
+  group_by(`Home Team`, `Away Team`) %>%
+  mutate(probability = probability / sum(probability)) %>%
+  ungroup()
+```
+
+
+```{r include=FALSE}
+# Hickman 
+
+# create a datatable of the tile plot/probability matrix from earlier
+nested_probabilities <- predicted_fixture_goal_probabilities %>%
+  select(Week, `Home Team`, `Away Team`, sample_home_goals, sample_away_goals, probability) %>% 
+  nest(probabilities = c(sample_home_goals, sample_away_goals, probability))
+
+# use these nested probabilities to simulate results in the following code chunk
+nested_probabilities$probabilities[[7]] %>%
+  rename("Liverpool Goals" = sample_home_goals, "Tottenham Goals" = sample_away_goals) %>%
+  arrange(-probability) %>%
+  #show first 5 rows
+  .[1:5,]
+```
+
+
+```{r include=FALSE}
+# Hickman
+
+# sampling from every remaining fixture 100 times 
+set.seed(6650)
+m <- 100
+simulated_matches <- rerun(m, nested_probabilities %>% 
+  mutate(sampled_result = map(probabilities, sample_n, 1, weight = probability)) %>%
+  select(-probabilities) %>%
+  unnest(cols = c(sampled_result)) %>%
+  select(-probability) %>%
+  pivot_longer(c(`Home Team`, `Away Team`), names_to = "location", values_to = "team") %>%
+  
+  # assign points in each match based on the simulated outcome
+  mutate(points = case_when(
+    location == "Home Team" & sample_home_goals > sample_away_goals ~ 3,
+    location == "Away Team" & sample_away_goals > sample_home_goals ~ 3,
+    sample_home_goals == sample_away_goals ~ 1,
+    TRUE ~ 0
+  )) %>%
+  
+  # assign goal difference to each team based on the simulated outcome
+  mutate(gd = case_when(
+    location == "Home Team" ~ sample_home_goals - sample_away_goals,
+    location == "Away Team" ~ sample_away_goals - sample_home_goals
+  )))
+
+simulated_matches[1]
+```
+
+# Results
+
+The results of the Monte Carlo simulations of the Poisson process are tabulated below. After simulating each fixture from gameweek 13 onward, Chelsea end up earning the most points per fixture by a solid margin ahead of current champions Liverpool, Manchester City and Aston Villa. As for average goal difference across the simulations, the same four teams are represented at the top, with West Bromwich Albion, Burnley, and Sheffield United in the relegation zone.    
+
+```{r message=FALSE, echo=FALSE}
+# tabulate simulated matches in a table
+simulated_table <- simulated_matches %>% 
+  bind_rows() %>% 
+  group_by(team) %>% 
+  # include average points and average goal difference from all 100 simulations
+  summarise(average_points = sum(points) / m, 
+            average_goal_difference = sum(gd) / m) %>% 
+  mutate(points_per_game = average_points / weighted_data$games_remaining) %>% 
+  arrange(desc(points_per_game))
+
+simulated_table %>% 
+  kable(caption = "Simulated Premier League Standings Gameweek 13 Onward") %>% 
+  kable_styling(latex_options = "hold_position")
+```
+
+As for the combined standings (between the simulated and current league standings), Liverpool finishes as champions once again, with Manchester City and fairytale team Aston Villa rounding out the top 4. As for relegation, Fulham manage to barely edge out Burnley, who are sent down to the Championship with Sheffield United and league newcomer West Bromwich Albion. 
+
+```{r echo=FALSE}
+# realign simulated table and current table
+current_league_standings <- current_league_standings %>% 
+  arrange(team)
+simulated_table <- simulated_table %>% 
+  arrange(team)
+
+# tabulate final league standings 
+final_league_standings <- cbind(simulated_table, current_points = current_league_standings$points, current_goal_difference = current_league_standings$goal_difference) %>% 
+  # add simulated results to current results
+  mutate(predicted_points = average_points + current_points) %>% 
+  mutate(predicted_goal_difference = average_goal_difference + current_goal_difference) %>% 
+  select(team, predicted_points, predicted_goal_difference) %>% 
+  # arrange from first to last place
+  arrange(desc(predicted_points))
+
+final_league_standings %>% 
+  kable(caption = "Final Predicted Premier League Standings") %>% 
+  kable_styling(latex_options = "hold_position")
+```
+\newpage
+# Discussion
+
+## Model Implications
+In this paper, league results were simulated based on expected statistics collected by Understat from the first 12 gameweeks of the Premier League season. Of the displayed results, perhaps most notable is the relatively low values of total average points and total goal difference in the simulated Premier League table. In recent years, the Premier League winner has finished on 99, 98, 100 and 93 points dating back to 2017. In fact, over the last 25 years, the average league winner has accumulated just over 87 points in a crowning season. While this is not to say that the results of this model are unfounded (Manchester United and Arsenal have won the league at 75 and 78 points respectively), there is an indication that this xG model has increased the parity of most teams in the league, resulting in more ties and thus fewer points (as was the case in the Liverpool vs. Tottenham example). 
+
+One explanation for this points deflation is that the weights assigned to each team in the league were each scaled based on the league average for xG. Since dividing team xG tallies by the league average reduced the absolute strength of each team offensively and defensively, it therefore reduced the lambdas used to predict the number of goals scored by each team in every fixture. While this scaling may have been ideal for predicting one off odds of a team winning, applying a Monte Carlo simulation to these figures likely lead to an increased selection of close, low-scoring affairs between most of the teams. 
+
+## Limitations
+More than anything else, this expected goals model is likely best served as a starting point for more intricate predictive models. Football is an incredibly dynamic game which changes from minute to minute, let alone game to game or season to season. As such, the results of this paper are limited primarily by three things: sample size, recency bias, and its failure to address the dynamism of the league itself. 
+
+There are a few reasons why this model relies solely on data from only the first 12 gameweeks of the 2020-2021 Premier League season. One reason is because this is the only season to have these specific 20 teams. The promotion/relegation system of English football makes it impossible for the same 20 teams to play one another from one season to the next (unlike the North American franchise model). Another reason is because teams from one season to the next are given time to sign and release players, at times dramatically changing the lineup and therefore results of a team (see: Chelsea). While the limited sample size manages to account for current teams and their rosters, it creates problems for the study with regards to recency bias. 
+
+There is a fine balance between focusing on recent events over historical trends. One issue this model faces is that it does not account for outlier fixture results that have already occurred this season. For example, although Aston Villa trounced Liverpool 7-2 (xG: 3.08-1.66) in gameweek 4, it is becoming more and more plausible that this result was nothing more than a freak occurrence, an onslaught brought on by a few early goals and some questionable goalkeeping. Beyond statistical anomalies, the 12 week sample size this model uses may have disproportionately affected teams on cold streaks (Manchester City) and teams with injury troubles (Burnley). While xG models in general tend to account for underperforming and overperforming teams, the model in its current state is not able to account for injury riddled teams.
+
+This dilemma leads to perhaps the biggest limitation of the model, the fact that it tries to apply a relatively static model to an incredibly dynamic game. Having been without key defender Ben Mee at the start of the season, Burnley struggled to keep the ball out of the net. Since his return however, Burnley have reverted back to their usual formidable defensive block. Another prime example of dynamism in football is with regards to player and coaching personnel. Just as Bruno Fernandes did last year, one new signing, or one player returning from injury can completely change a team's season around. Additionally, a team with several new pieces may take time to gel together as a cohesive unit. 
+
+## Future Studies
+Future works may wish to incorporate different expected stats to to build their offensive and defensive ratings for teams in the Premier League. For example, substantial data exists with regards to non-penalty xG and xGA, a metric that can help reduce the variance and unpredictability of penalties in a football match. Two other metrics that Understat provides that may be of use include passes allowed per defensive action and opponent passes allowed per defensive action, measures that can help proxy a team's defensive pressure and ability to win the ball back quickly. 
+
+A significant complication of this model is that it assumes that every team will play the same way against every other team in the league. Even the most causal football fan can watch a game and immediately  conclude which side is playing a riskier attacking style and which side is parking the bus in front of their goal. Stylistic match ups play an important role in determining match results, so accounting for certain match ups may help improve the efficacy of any future predictive models. 
+
+Finally, it should be noted that the Poisson model for goal distributions may not be the most ideal to represent goals. Since the distribution assumes that the likelihood of an event happening is the same throughout an entire time period, it assumes that the rate of goals being scored in a football match is distributed relatively evenly. Research has shown however that goal frequency increases the further one goes into a game (perhaps due to substitutions, pressure, and physical and mental fatigue). Future research may address this shortcoming by mapping goals to a different distribution, such as a bivariate Poisson or Weibull distribution. 
+
+\newpage
+# Appendix 
+
+```{r message=FALSE, warning=FALSE, echo=FALSE, fig.cap="PL Teams Ranked by xG Per Game"}
+# bar chart of expected goals per game by team
+xG_per_game_bar <- xG_per_game %>% 
+  ggplot(aes(x=reorder(team, xG_per_game), y=xG_per_game, fill = team)) +
+  geom_bar(stat="identity") + 
+  theme_classic() +
+  # horizontal bar chart 
+  coord_flip() +
+  theme(legend.position = "none") +
+  labs(y = "Expected Goals Per Game", 
+       x = "Teams") +
+  # assign team colours to each bar 
+  scale_fill_manual(values = team_colours) +
+  scale_y_continuous(limits = c(0, 2.5))
+
+xG_per_game_bar
+```
+
+```{r message=FALSE, warning=FALSE, echo=FALSE, fig.cap="PL Teams Ranked by xGA Per Game"}
+# bar chart of expected goals against per game by team
+xGA_per_game_bar <- xGA_per_game %>% 
+  ggplot(aes(x=reorder(team, -xGA_per_game), y=xGA_per_game, fill = team)) +
+  geom_bar(stat="identity") + 
+  theme_classic() +
+  # horizontal bar chart
+  coord_flip() +
+  theme(legend.position = "none") +
+  labs(y = "Expected Goals Against Per Game", 
+       x = "Teams") +
+  # assign team colours to each bar
+  scale_fill_manual(values = team_colours) +
+  scale_y_continuous(limits = c(0, 2.0))
+
+xGA_per_game_bar
+```
+
+```{r message=FALSE, warning=FALSE, echo=FALSE, fig.cap="PL Teams Ranked by xGD Per Game"}
+# expected goal difference per game
+xGD <- understat_data %>%
+  mutate(expected_goal_difference = expected_goals - expected_goals_against)
+  
+xGD <- xGD %>% 
+  group_by(team) %>%
+  summarize(avg_xGD = mean(expected_goal_difference))
+
+# bar chart of expected goal difference per game by team
+xGD_bar <- xGD %>% 
+  ggplot(aes(x=reorder(team, avg_xGD), y=avg_xGD, fill=team)) +
+  geom_bar(stat="identity") + 
+  theme_classic() +
+  # horizontal bar chart
+  coord_flip() +
+  theme(legend.position = "none") +
+  labs(y = "Expected Goal Difference Per Game", 
+       x = "Teams") +
+  # assign team colours to each bar
+  scale_fill_manual(values = team_colours) +
+  scale_y_continuous(limits = c(-1.5, 1.0))
+
+xGD_bar
+```
+
+```{r message=FALSE, echo=FALSE, fig.cap="Expected vs. Actual Goals Per Game"}
+# expected goals vs. actual goals per game
+goals_per_game <- understat_data %>% 
+  group_by(team) %>%
+  summarize(goals_per_game = mean(goals_scored))
+
+xG_real_goals = bind_cols(xG_per_game, goals_per_game$goals_per_game) %>% 
+  rename(goals_per_game = ...3)
+
+# scatter plot of xG vs. actual goals per game by team
+xG_real_goals_scatter <- xG_real_goals %>% 
+  ggplot(aes(x = xG_per_game, y = goals_per_game, color = team), name = team) +
+  theme_classic() +
+  theme(legend.position = "none") +
+  geom_point() +
+  # add dotted line to demarcate teams scoring more than expected (above diagonal line)
+  geom_abline(linetype = "dotted", slope = 1) +
+  geom_text_repel(aes(label = team), size = 3.5) +
+  labs(x = "Expected Goals Per Game",
+     y = "Goals Per Game") +
+  # assign team colours to font/points
+  scale_color_manual(values = team_colours) +
+  scale_x_continuous(limits = c(0.5, 2.25)) +
+  scale_y_continuous(limits = c(0.25, 2.5))
+
+xG_real_goals_scatter
+```
+
+```{r message=FALSE, echo=FALSE, fig.cap="Expected vs. Actual Goals Against Per Game"}
+# expected goals vs. actual goals against per game
+goals_against_per_game <- understat_data %>% 
+  group_by(team) %>%
+  summarize(goals_against_per_game = mean(goals_against))
+
+xGA_real_goals_against = bind_cols(xGA_per_game, goals_against_per_game$goals_against_per_game) %>% 
+  rename(goals_against_per_game = ...3)
+
+# scatter plot of xGA vs. actual goals against per game by team
+xGA_real_goals_against_scatter <- xGA_real_goals_against %>% 
+  ggplot(aes(x = xGA_per_game, y = goals_against_per_game, color = team), name = team) +
+  theme_classic() +
+  theme(legend.position = "none") +
+  geom_point() +
+  # add dotted line to demarcate teams conceding less than expected (below the diagonal)
+  geom_abline(linetype = "dotted", slope = 1) +
+  geom_text_repel(aes(label = team), size = 3.5) +
+  labs(x = "Expected Goals Against Per Game",
+     y = "Goals Against Per Game") +
+  scale_color_manual(values = team_colours) +
+  scale_x_continuous(limits = c(0.75, 2.0)) +
+  scale_y_continuous(limits = c(0.75, 2.25))
+
+xGA_real_goals_against_scatter
+```
+
+```{r message=FALSE, echo=FALSE, fig.cap="Expected Goals vs. Expected Goals Against"}
+# scatter plot of xG vs xGA per game by team
+xG_xGA_scatter <- xG_xGA %>% 
+  ggplot(aes(x = xG_per_game, y = xGA_per_game, color = team), name = teams) +
+  theme_classic() +
+  theme(legend.position = "none") +
+  geom_point() +
+  # add dotted line to demarcate teams outplaying their opposition based on expected stats (below the diagonal)
+  geom_abline(linetype = "dotted", slope = 1) +
+  geom_text_repel(aes(label = team), size = 3.5) +
+  labs(x = "Expected Goals Per Game",
+     y = "Expected Goals Against Per Game") +
+  # assign team colours to font/points
+  scale_color_manual(values = team_colours) +
+  scale_x_continuous(limits = c(0.5, 2.25)) +
+  scale_y_continuous(limits = c(0.75, 2.0)) 
+
+xG_xGA_scatter
+```
+
+```{r message=FALSE, echo=FALSE, fig.cap= "Under and Overperforming Teams Based on Expected and Actual Goals"}
+# over and under performing teams
+xG_real_goals <- xG_real_goals %>% 
+  mutate(diff_real_expected_goals = goals_per_game - xG_per_game)
+
+xGA_real_goals_against <- xGA_real_goals_against %>% 
+  mutate(diff_expected_real_goals_against = xGA_per_game - goals_against_per_game)
+
+over_under_performance = bind_cols(xG_real_goals$team, xG_real_goals$diff_real_expected_goals, xGA_real_goals_against$diff_expected_real_goals_against) %>% 
+  rename(team = ...1,
+         diff_real_expected_goals = ...2,
+         diff_expected_real_goals_against = ...3)
+
+# scatter plot of teams scoring/conceding based on expected outcomes
+over_under_performance_scatter <- over_under_performance %>% 
+  ggplot(aes(x = diff_expected_real_goals_against, y = diff_real_expected_goals, color = team), name = team) +
+  theme_classic() +
+  theme(legend.position = "none") +
+  geom_point() +
+  # demarcate better finishing teams (above horizontal)
+  geom_hline(yintercept = 0, linetype = "dotted") +
+  # demarcate teams conceding less than expected (right of vertical)
+  geom_vline(xintercept = 0, linetype = "dotted") +
+  geom_text_repel(aes(label = team), size = 3.5) +
+  labs(x = "Expected Goals Against Minus Actual Goals Against Per Match",
+     y = "Actual Goals Minus Expected Goals") +
+  # assign team colours
+  scale_color_manual(values = team_colours) +
+  scale_x_continuous(limits = c(-0.6, 0.6)) 
+
+over_under_performance_scatter
+```
+
+
+\newpage
+# References
+
+Anand, V. (2020). Github Repository: Fantasy-Premier-League. Retrieved from https://github.com/vaastav/Fantasy-Premier-League
+Chu, S. (2003). Using Soccer Goals to Motivate the Poisson Process. Retrieved 2020, from https://pubsonline.informs.org/doi/abs/10.1287/ited.3.2.64
+
+Dyte, D., & Clarke, S. R. (2017). A ratings based Poisson model for World Cup soccer simulation. Retrieved 2020, from https://orsociety.tandfonline.com/doi/abs/10.1057/palgrave.jors.2600997#.X-JMJdhKiUk
+
+Hickman, R. (2020). An Introduction to Modelling Soccer Matches in R (part 2). Retrieved 2020, from https://www.robert-hickman.eu/post/dixon_coles_2/
+
+Hao Zhu (2019). kableExtra: Construct Complex Table with 'kable' and Pipe Syntax. R package version 1.1.0.
+https://CRAN.R-project.org/package=kableExtra
+  
+Kamil Slowikowski (2020). ggrepel: Automatically Position Non-Overlapping Text Labels with 'ggplot2'. R package version 0.9.0.
+https://CRAN.R-project.org/package=ggrepel
+  
+R Core Team (2020). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna,
+Austria. URL https://www.R-project.org/.
+  
+Sheehan, D. (2017). Predicting Football Results With Statistical Modelling. Retrieved 2020, from https://dashee87.github.io/data science/football/r/predicting-football-results-with-statistical-modelling/
+
+Smith, A. (2017). Sky Sports bust common football myths: Home advantage? Retrieved 2020, from https://www.skysports.com/football/news/11096/10955089/sky-sports-bust-common-football-myths-home-advantage
+
+Taylor, M. (2016). How To Frame An Individual Match Outcome. Retrieved 2020, from                 http://thepowerofgoals.blogspot.com/2016/02/how-to-frame-individual-match-outcome.htmlUnderstat. (2017). EPL xG Table and Scorers for the       2020/2021 season. Retrieved 2020, from https://understat.com/league/EPL
+
+Wickham et al., (2019). Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686,
+https://doi.org/10.21105/joss.01686
+>>>>>>> 2363a2d69e6a11a9d2e52ed32cf71f440852d48b
