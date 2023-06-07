@@ -2,7 +2,7 @@
 title: "Forecasting the Best Teams for the Remainder of the 2020-2021 Premier League Season"
 author: "Neelansh Visen"
 date: "22 December 2020"
-abstract: "The advent of analytics and advanced metrics in associatio football (soccer) has led to the adoption of more sophisticated models used to determine the outcomes of games across a season. Recently, expected statistics (particularly expected goals) have gained popularity in their ability to provide a balanced evaluation of team performance in a match. In this paper, I create a predictive model of team performance based on a club's expected goals for and expected goals against against from the first third of the 2020-2021 Premier League Season. Based on these findings, a Monte Carlo simulation is run on the remaining fixtures of the 2020-2021 season, with Liverpool slightly edging out the competition to claim their second title in as many years. "
+abstract: "The advent of analytics and advanced metrics in association football (soccer) has led to the adoption of more sophisticated models used to determine the outcomes of games across a season. Recently, expected statistics (particularly expected goals) have gained popularity in their ability to provide a balanced evaluation of team performance in a match. In this paper, I create a predictive model of team performance based on a club's expected goals for and expected goals against against from the first third of the 2020-2021 Premier League Season. Based on these findings, a Monte Carlo simulation is run on the remaining fixtures of the 2020-2021 season, with Liverpool slightly edging out the competition to claim their second title in as many years. "
 output:
   pdf_document: default
   html_document: default
@@ -24,7 +24,7 @@ set.seed(6650)
 ```
 
 ```{r message=FALSE, include=FALSE}
-# read in the dataset 
+# read in the CSV dataset 
 all_data <- read_csv("understat_all_teams.csv")
 ```
 
